@@ -70,7 +70,7 @@ def get_data_cfnfci(param):
 
 
 def get_data_cfnai_series(param):
-    data_cfnai_series = pd.read_excel("Dataset/cfnai-data-series-xlsx.xlsx")
+    data_cfnai_series = pd.read_csv(param)
     data_cfnai_series["Date"] = pd.to_datetime(data_cfnai_series["Date"], format='%Y:%m')
     data_cfnai_series = data_cfnai_series[data_cfnai_series["Date"].dt.year >= 2005]
     data_cfnai_series["Year-Month"] = data_cfnai_series["Date"].dt.to_period('M')
@@ -105,7 +105,7 @@ def convert_train_data(data_train: pd.DataFrame) -> tuple[DataFrame, Series]:
     data_cfnfci = get_data_cfnfci("Dataset/cfnfci.csv")
     data_train = pd.merge(data_train, data_cfnfci, on='Year-Month', how='inner')
 
-    data_cfnai_series = get_data_cfnai_series("Dataset/cfnai-data-series-xlsx.xlsx")
+    data_cfnai_series = get_data_cfnai_series("Dataset/CFNAI.csv")
     data_train = pd.merge(data_train, data_cfnai_series.drop("Date", axis=1), on='Year-Month', how='inner')
 
     data_train = data_train.drop(["Date_x", "Date_y"], axis=1)
