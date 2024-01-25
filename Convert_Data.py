@@ -65,13 +65,13 @@ def get_data_cfnfci(param):
     data_cfnfci = data_cfnfci[data_cfnfci["Date"].dt.year >= 2005]
     data_cfnfci["Year-Month"] = data_cfnfci["Date"].dt.to_period('M')
     data_cfnfci = data_cfnfci.groupby(data_cfnfci['Year-Month']).mean()
-    data_cfnai_series = drop_all_except(data_cfnfci, "NFCI", "Date", "Year-Month")
+    data_cfnfci = drop_all_except(data_cfnfci, "NFCI", "Date", "Year-Month")
     return data_cfnfci
 
 
 def get_data_cfnai_series(param):
     data_cfnai_series = pd.read_csv(param)
-    data_cfnai_series["Date"] = pd.to_datetime(data_cfnai_series["Date"], format='%Y:%m')
+    data_cfnai_series["Date"] = pd.to_datetime(data_cfnai_series["Date"], format='%Y/%m')
     data_cfnai_series = data_cfnai_series[data_cfnai_series["Date"].dt.year >= 2005]
     data_cfnai_series["Year-Month"] = data_cfnai_series["Date"].dt.to_period('M')
     data_cfnai_series = drop_all_except(data_cfnai_series, "CFNAI", "Date", "Year-Month")
@@ -94,7 +94,7 @@ def convert_train_data(data_train: pd.DataFrame) -> tuple[DataFrame, Series]:
 
     data_train = strip_date(data_train)
 
-    #data_train = pd.get_dummies(data_train, columns=["Month"], prefix=["Month"])
+    data_train = pd.get_dummies(data_train, columns=["Month"], prefix=["Month"])
     data_train = pd.get_dummies(data_train, columns=['Sector'], prefix='Sector')
 
 
@@ -111,7 +111,7 @@ def convert_train_data(data_train: pd.DataFrame) -> tuple[DataFrame, Series]:
     data_train = data_train.drop(["Date_x", "Date_y"], axis=1)
     #data_train = predict_missing_values_except(data_train, ['Date', 'Year-Month'])
 
-    data_train = data_train.drop(["Year-Month", "Month"], axis=1)
+    data_train = data_train.drop(["Year-Month"], axis=1)
 
     X_train, y_train = split_by_attr("Rating", data_train)
 
@@ -132,7 +132,7 @@ def convert_test_data(X_data_test: pd.DataFrame) -> pd.DataFrame:
 
     X_data_test = strip_date(X_data_test)
 
-    #data_train = pd.get_dummies(data_train, columns=["Month"], prefix=["Month"])
+    data_train = pd.get_dummies(data_train, columns=["Month"], prefix=["Month"])
     X_data_test = pd.get_dummies(X_data_test, columns=['Sector'], prefix='Sector')
 
 
@@ -143,12 +143,12 @@ def convert_test_data(X_data_test: pd.DataFrame) -> pd.DataFrame:
     data_cfnfci = get_data_cfnfci("Dataset/cfnfci.csv")
     X_data_test = pd.merge(X_data_test, data_cfnfci, on='Year-Month', how='inner')
 
-    data_cfnai_series = get_data_cfnai_series("Dataset/cfnai-data-series-xlsx.xlsx")
+    data_cfnai_series = get_data_cfnai_series("Dataset/CFNAI.csv")
     X_data_test = pd.merge(X_data_test, data_cfnai_series.drop("Date", axis=1), on='Year-Month', how='inner')
 
     X_data_test = X_data_test.drop(["Date_x", "Date_y"], axis=1)
     #data_train = predict_missing_values_except(data_train, ['Date', 'Year-Month'])
 
-    X_data_test = X_data_test.drop(["Year-Month", "Month"], axis=1)
+    X_data_test = X_data_test.drop(["Year-Month"], axis=1)
 
     return X_data_test
