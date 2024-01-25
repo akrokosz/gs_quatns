@@ -86,9 +86,10 @@ def convert_train_data(data_train: pd.DataFrame) -> tuple[DataFrame, Series]:
     X_train = pd.get_dummies(X_train, columns=["Month"], prefix=["Month"])
     X_train = pd.get_dummies(X_train, columns=['Sector'], prefix='Sector')
 
-    # X_data_train["Year-Month"] = X_data_train["Date"].dt.to_period('M')
+    # X_train["Year-Month"] = X_train["Date"].dt.to_period('M')
     # data_income_tax = get_data_income_tax_from("Dataset/income_tax.csv")
-    # X_df_train = pd.merge(X_data_train, data_income_tax, on="Year-Month", how='left')
+    #
+    # X_df_train = pd.merge(X_train, data_income_tax, on="Year-Month", how='left')
     # data_cfnfci = get_data_cfnfci("Dataset/cfnfci.csv")
     # X_df_train = pd.merge(X_df_train, data_cfnfci, on='Year-Month', how='left')
     # data_cfnai_series = get_data_cfnai_series("Dataset/cfnai-data-series-xlsx.xlsx")
