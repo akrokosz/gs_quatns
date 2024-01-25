@@ -48,7 +48,7 @@ def find_params_grid(X_tr, y_tr, param_grid, path):
     return best_model
 
 
-def find_params(X_tr, y_tr, space, path):
+def find_params_xgb(X_tr, y_tr, space, path):
     global best
     best = {'avg_loss': np.inf}
 
