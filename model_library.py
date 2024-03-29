@@ -48,7 +48,7 @@ def find_params_grid(X_tr, y_tr, param_grid, path):
     return best_model
 
 
-def find_params_xgb(X_tr, y_tr, space, path):
+def find_params_xgb(X_tr, y_tr, space, path, max_evals=10000):
     global best
     best = {'avg_loss': np.inf}
 
@@ -79,7 +79,7 @@ def find_params_xgb(X_tr, y_tr, space, path):
 
         return avg_loss
 
-    best_hyperparams = fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=10000, verbose=True)
+    best_hyperparams = fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=max_evals, verbose=True)
     best_params = space_eval(space, best_hyperparams)
 
     print(f"Best hyperparameters: {best_params}")

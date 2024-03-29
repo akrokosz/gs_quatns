@@ -10,6 +10,7 @@ def strip_date(df):
     df = df.drop(columns=['Date'])
     return df
 
+
 def split_by_attr(attr: str, data_train: pd.DataFrame):
     X_data_train = data_train[[col for col in data_train.columns if col != attr]]
     y_data_train = data_train[attr]
@@ -87,7 +88,7 @@ def predict_missing_values_except(data: pd.DataFrame, excpetions: list[str]):
 
 
 def convert_train_data(data_train: pd.DataFrame) -> tuple[DataFrame, Series]:
-    #X_train, y_train = split_by_attr("Rating", data_train)
+    # X_train, y_train = split_by_attr("Rating", data_train)
     data_train["Rating"] = numerize(data_train["Rating"])
 
     data_train["Year-Month"] = data_train["Date"].dt.to_period('M')
@@ -96,7 +97,6 @@ def convert_train_data(data_train: pd.DataFrame) -> tuple[DataFrame, Series]:
 
     data_train = pd.get_dummies(data_train, columns=["Month"], prefix=["Month"])
     data_train = pd.get_dummies(data_train, columns=['Sector'], prefix='Sector')
-
 
     data_income_tax = get_data_income_tax_from("Dataset/income_tax.csv")
 
@@ -109,7 +109,7 @@ def convert_train_data(data_train: pd.DataFrame) -> tuple[DataFrame, Series]:
     data_train = pd.merge(data_train, data_cfnai_series.drop("Date", axis=1), on='Year-Month', how='inner')
 
     data_train = data_train.drop(["Date_x", "Date_y"], axis=1)
-    #data_train = predict_missing_values_except(data_train, ['Date', 'Year-Month'])
+    # data_train = predict_missing_values_except(data_train, ['Date', 'Year-Month'])
 
     data_train = data_train.drop(["Year-Month"], axis=1)
 
@@ -132,9 +132,8 @@ def convert_test_data(X_data_test: pd.DataFrame) -> pd.DataFrame:
 
     X_data_test = strip_date(X_data_test)
 
-    data_train = pd.get_dummies(data_train, columns=["Month"], prefix=["Month"])
+    X_data_test = pd.get_dummies(X_data_test, columns=["Month"], prefix=["Month"])
     X_data_test = pd.get_dummies(X_data_test, columns=['Sector'], prefix='Sector')
-
 
     data_income_tax = get_data_income_tax_from("Dataset/income_tax.csv")
 
@@ -147,7 +146,7 @@ def convert_test_data(X_data_test: pd.DataFrame) -> pd.DataFrame:
     X_data_test = pd.merge(X_data_test, data_cfnai_series.drop("Date", axis=1), on='Year-Month', how='inner')
 
     X_data_test = X_data_test.drop(["Date_x", "Date_y"], axis=1)
-    #data_train = predict_missing_values_except(data_train, ['Date', 'Year-Month'])
+    # data_train = predict_missing_values_except(data_train, ['Date', 'Year-Month'])
 
     X_data_test = X_data_test.drop(["Year-Month"], axis=1)
 
