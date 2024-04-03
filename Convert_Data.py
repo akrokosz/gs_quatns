@@ -3,6 +3,7 @@ import pandas as pd
 from pandas import DataFrame, Series
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer
+from typing import List, Tuple
 
 
 def strip_date(df):
@@ -79,7 +80,7 @@ def get_data_cfnai_series(param):
     return data_cfnai_series
 
 
-def predict_missing_values_except(data: pd.DataFrame, excpetions: list[str]):
+def predict_missing_values_except(data: pd.DataFrame, excpetions: List[str]):
     imputer = IterativeImputer(random_state=0)
     imputed = imputer.fit_transform(data[[col for col in data.columns if col not in excpetions]])
     data[[col for col in data.columns if col not in excpetions]] = pd.DataFrame(imputed, columns=[
@@ -87,7 +88,7 @@ def predict_missing_values_except(data: pd.DataFrame, excpetions: list[str]):
     return data
 
 
-def convert_train_data(data_train: pd.DataFrame) -> tuple[DataFrame, Series]:
+def convert_train_data(data_train: pd.DataFrame) -> Tuple[DataFrame, Series]:
     # X_train, y_train = split_by_attr("Rating", data_train)
     data_train["Rating"] = numerize(data_train["Rating"])
 
