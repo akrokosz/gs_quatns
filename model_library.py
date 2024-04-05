@@ -48,49 +48,6 @@ def find_params_grid(X_tr, y_tr, param_grid, path):
     return best_model
 
 
-def find_params_xgb(X_tr, y_tr, space, path, max_evals=10000):
-    global best
-    best = {'avg_loss': np.inf}
-
-    def objective(params):
-        model = XGBClassifier(**params, use_label_encoder=False, eval_metric='mlogloss')
-
-        kf = StratifiedKFold(n_splits=4)
-        custom_loss = []
-
-        for train_index, val_index in kf.split(X_tr, y_tr):
-            X_train_fold, X_val_fold = X_tr.iloc[train_index], X_tr.iloc[val_index]
-            y_train_fold, y_val_fold = y_tr.iloc[train_index], y_tr.iloc[val_index]
-
-            model.fit(X_train_fold, y_train_fold, verbose=3)
-            y_pred_fold = model.predict(X_val_fold)
-
-            cm_fold = confusion_matrix(y_val_fold, y_pred_fold)
-            fold_loss = loss_fn(cm_fold)
-            custom_loss.append(fold_loss)
-
-        avg_loss = np.mean(custom_loss)
-
-        if avg_loss < best['avg_loss']:
-            best['params'], best['avg_loss'] = params, avg_loss
-            print("NEW_BEST!")
-            print(f"Avg Custom Loss: {avg_loss}")
-            dump(best, path + '.joblib')
-
-        return avg_loss
-
-    best_hyperparams = fmin(fn=objective, space=space, algo=tpe.suggest, max_evals=max_evals, verbose=True)
-    best_params = space_eval(space, best_hyperparams)
-
-    print(f"Best hyperparameters: {best_params}")
-
-    best_model = XGBClassifier(**best_params, use_label_encoder=False, eval_metric='mlogloss')
-    best_model.fit(X_tr, y_tr)
-    dump(best_model, path + '_final_model.joblib')
-
-    return best_model
-
-
 def save_model(model):
     next_index = _get_next_index()
     file_path = os.path.join(directory, f"best{next_index}.joblib")
